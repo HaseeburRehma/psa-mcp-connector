@@ -1,0 +1,29 @@
+{
+  "name": "psa-mcp-connector",
+  "version": "0.1.0",
+  "description": "MCP server that gives an AI agent scoped, redacted access to an MSP's ticketing (PSA) data",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "psa-mcp-connector": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "demo": "npm run build && node dist/demo.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.10",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.12"
+  }
+}

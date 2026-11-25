@@ -1,0 +1,109 @@
+Tools offered to the model (harbor-dental, writes on): list_open_tickets, get_ticket, search_tickets, add_internal_note
+
+── list_open_tickets
+   [
+     {
+       "id": 1002,
+       "summary": "Card reader at reception declined a payment",
+       "status": "in_progress",
+       "priority": "medium",
+       "created_at": "2026-11-24T10:40:00Z"
+     },
+     {
+       "id": 1001,
+       "summary": "Front desk PC cannot open the X-ray viewer",
+       "status": "new",
+       "priority": "high",
+       "created_at": "2026-11-24T09:12:00Z"
+     },
+     {
+       "id": 1003,
+       "summary": "New hire needs an M365 account",
+       "status": "waiting_on_client",
+       "priority": "low",
+       "created_at": "2026-11-23T15:20:00Z"
+     }
+   ]
+
+── get_ticket 1001: phone and email masked
+   {
+     "id": 1001,
+     "summary": "Front desk PC cannot open the X-ray viewer",
+     "details": "Since this morning the imaging viewer on FRONTDESK-02 crashes on launch. Dr. Patel needs it for the 2 pm patient. Call Maria at [PHONE] when fixed.",
+     "status": "new",
+     "priority": "high",
+     "requester": "[EMAIL]",
+     "created_at": "2026-11-24T09:12:00Z",
+     "notes": []
+   }
+
+── get_ticket 1002: card number masked, order ref kept
+   {
+     "id": 1002,
+     "summary": "Card reader at reception declined a payment",
+     "details": "Patient payment failed twice. Receptionist typed the card into the ticket so we can check: [CARD], exp 12/28. Order ref 4111-2026-118.",
+     "status": "in_progress",
+     "priority": "medium",
+     "requester": "[EMAIL]",
+     "created_at": "2026-11-24T10:40:00Z",
+     "notes": [
+       {
+         "author": "tech: sam",
+         "internal": true,
+         "created_at": "2026-11-24T11:02:00Z",
+         "body": "Asked them not to paste card numbers into tickets."
+       }
+     ]
+   }
+
+── get_ticket 1003: contains a password, so it is withheld  [error returned to the model]
+   Blocked by the data policy for this client: the result contains secret. Ask a technician to review the ticket directly.
+
+── get_ticket 2001: another client's ticket  [error returned to the model]
+   Ticket 2001 was not found for this client.
+
+── add_internal_note with a pasted key: rejected  [error returned to the model]
+   Note rejected: it contains secret.
+
+── add_internal_note: accepted, email masked on the way in
+   Internal note added to ticket 1001.
+
+Tools offered to the model (lakeside-law, writes off): list_open_tickets, get_ticket, search_tickets
+
+── get_ticket 2001: AWS key in the ticket, so it is withheld (and its injected instruction never reaches the model)  [error returned to the model]
+   Blocked by the data policy for this client: the result contains secret. Ask a technician to review the ticket directly.
+
+── search_tickets 'outlook'
+   [
+     {
+       "id": 2002,
+       "summary": "Outlook keeps asking for the password",
+       "status": "in_progress",
+       "priority": "medium",
+       "created_at": "2026-11-24T08:30:00Z"
+     }
+   ]
+
+── get_ticket 2002: international phone masked
+   {
+     "id": 2002,
+     "summary": "Outlook keeps asking for the password",
+     "details": "Three paralegals get repeated login prompts in Outlook desktop after the MFA change. Phone [PHONE].",
+     "status": "in_progress",
+     "priority": "medium",
+     "requester": "[EMAIL]",
+     "created_at": "2026-11-24T08:30:00Z",
+     "notes": []
+   }
+
+── Audit log (one line per call)
+   harbor-dental  list_open_tickets        ok        -
+   harbor-dental  get_ticket         1001  ok        email×1 phone×1
+   harbor-dental  get_ticket         1002  ok        email×1 card×1
+   harbor-dental  get_ticket         1003  blocked   secret×1 email×1
+   harbor-dental  get_ticket         2001  not_found -
+   harbor-dental  add_internal_note  1001  rejected  secret×1
+   harbor-dental  add_internal_note  1001  ok        email×1
+   lakeside-law   get_ticket         2001  blocked   secret×1 email×1
+   lakeside-law   search_tickets           ok        -
+   lakeside-law   get_ticket         2002  ok        email×1 phone×1
